@@ -4,23 +4,24 @@ Juego para tomar estilo Picolo, hecho para la previa de la despedida de soltero 
 
 ## Modos
 
-- **Individual:** cartas de retos rápidos, “toman los que…”, “yo nunca”, cultura chupística, virus, duelos, votaciones, castigos máximos (terminarse el vaso), brindis y especiales de Exe. Mazo de 55 cartas al azar por partida.
-- **2 equipos:** se ingresan los jugadores (mínimo 4), se sortean dos equipos al azar (se les puede cambiar el nombre o volver a sortear) y hay retos de equipo con marcador. Al final, el equipo perdedor toma.
+- **Individual:** 52 cartas al azar (retos, “toman los que…”, “yo nunca”, cultura chupística, duelos, votaciones, over/under, ¡a buscar!, castigos máximos y especiales de Exe), más los brindis, 5 virus y una bomba.
+- **2 equipos:** cartas propias, distintas a las del modo individual: retos con marcador (cultura por equipos, flip the cup, beer pong, Wordle, over/under, trivias…), cartas de equipo, brindis, virus de equipos y una bomba. Al final, el equipo perdedor toma.
 
 ## Cómo jugar
 
 1. Agregar a los jugadores y elegir el modo.
 2. Tocar la pantalla para pasar de carta; “Atrás” vuelve a la anterior.
-3. En modo equipos, en los retos y duelos se marca qué equipo ganó para sumar al marcador.
+3. En las trivias y over/under con respuesta, el primer toque muestra la respuesta y el segundo pasa de carta.
+4. En modo equipos, en los retos se marca qué equipo ganó para sumar al marcador.
 
-Los virus duran entre 5 y 10 cartas y luego aparece su carta de término.
+Los virus terminan entre 3 y 14 cartas después de aparecer. La bomba explota en algún momento entre 2 y 7 minutos después de su carta: el que aparezca en la carta en pantalla se toma el vaso.
 
 ## Estructura
 
 - `index.html`: todo el juego en un solo archivo (cartas, estilos y lógica).
 - `manifest.webmanifest`, `sw.js`, `icons/`: para instalarlo como app y jugar sin conexión.
 
-Las cartas están en las constantes `CARDS`, `TEAM_CARDS`, `VIRUS` y `TEAM_VIRUS` dentro del script de `index.html`. `{A}` y `{B}` se reemplazan por jugadores al azar; `{T}` y `{O}` por los equipos.
+Las cartas están en las constantes `CARDS` (individual), `TEAM_CARDS` (equipos), `SHARED` (ambos), `VIRUS` y `TEAM_VIRUS` dentro del script de `index.html`. `{A}` y `{B}` se reemplazan por jugadores al azar; `{T}` y `{O}` por los equipos.
 
 Los nombres de los jugadores quedan guardados en el `localStorage` del teléfono.
 

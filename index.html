@@ -119,6 +119,11 @@ button:focus-visible,input:focus-visible,[tabindex]:focus-visible{outline:3px so
 .fam-banda .kind{background:var(--oro);color:var(--azul-hondo)}
 .fam-banda .text b{color:var(--oro)}
 .endcrest{width:140px;margin-bottom:8px}
+.ans{margin:20px 0 0;font-weight:800;font-size:1.15rem;padding:8px 14px;border-radius:10px;background:rgba(0,0,0,.18)}
+.boom{position:fixed;inset:0;z-index:20;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:24px;
+  background:var(--oro);color:var(--azul-hondo);padding-top:calc(24px + env(safe-area-inset-top,0px));padding-bottom:calc(24px + env(safe-area-inset-bottom,0px));cursor:pointer;animation:pop .3s ease-out}
+.boom .text b{color:var(--azul-claro)}
+.boom-title{font-family:"Bungee",Impact,sans-serif;font-size:clamp(2.6rem,13vw,4rem);margin:0 0 18px;transform:rotate(-4deg)}
 .score{font-family:"Bungee",Impact,sans-serif;font-size:1.3rem;margin:0 0 14px}
 </style>
 </head>
@@ -182,6 +187,12 @@ button:focus-visible,input:focus-visible,[tabindex]:focus-visible{outline:3px so
   <button class="ghost" id="teamsBack" style="margin-top:0">Volver</button>
 </main>
 
+<div id="boom" class="boom" hidden role="alertdialog" aria-labelledby="boomTitle">
+  <p class="boom-title" id="boomTitle">💣 ¡Bomba!</p>
+  <p class="text" id="boomText"></p>
+  <p class="tap">Toca para cerrar</p>
+</div>
+
 <section id="game" aria-live="polite">
   <div class="bar">
     <button id="quitBtn">Salir</button>
@@ -202,10 +213,13 @@ button:focus-visible,input:focus-visible,[tabindex]:focus-visible{outline:3px so
     normal:["Wn chucha wn","azul"], todos:["Todos","hondo"], yonunca:["Yo nunca","banda"],
     cultura:["Cultura chupística","oro"], virus:["Virus","oro"], finvirus:["Fin del virus","hondo"],
     duelo:["Duelo","oro"], voto:["Votación","banda"], exe:["Especial Exe","oro"],
-    brindis:["Brindis","hondo"], castigo:["Castigo máximo","oro"], equipo:["Equipos","azul"], reto:["Reto de equipos","oro"], fin:["Se acabó","hondo"]
+    brindis:["Brindis","hondo"], castigo:["Castigo máximo","oro"], overunder:["Over / Under","banda"], busqueda:["¡A buscar!","azul"], bomba:["Bomba","oro"], equipo:["Equipos","azul"], reto:["Reto de equipos","oro"], fin:["Se acabó","hondo"]
   };
 
   // {A}/{B}: jugadores al azar · {T}/{O}: equipos (solo modo equipos)
+  // Un tercer elemento es la respuesta: se muestra al tocar una vez antes de pasar de carta.
+
+  // ===== MODO INDIVIDUAL =====
   const CARDS = [
     // ---- retos rápidos
     ["normal","{A}, di 5 marcas de cerveza en 10 segundos. Si lo logras, reparte 3. Si no, toma 3."],
@@ -216,20 +230,22 @@ button:focus-visible,input:focus-visible,[tabindex]:focus-visible{outline:3px so
     ["normal","{A}, elige un número del 1 al 4. Tómate esa cantidad de tragos y reparte el doble."],
     ["normal","{A}, elige a tu compañero de copete: hasta tu próxima carta, cada vez que uno tome, el otro toma también."],
     ["normal","{A}, si tienes el vaso más lleno de la mesa, toma 3. Si no, reparte 3."],
-    ["normal","{A}, haz 10 flexiones o toma 4. Flo estaría orgullosa."],
+    ["normal","{A}, haz 10 sentadillas o toma 4. Flo estaría orgullosa."],
     ["normal","{A}, di sin equivocarte: “tres tristes tigres tragaban trigo en un trigal”. Si fallas, toma 3."],
     ["normal","{A} y {B} se cambian de puesto. Los dos toman 1 por las molestias."],
     ["normal","{A} toma 1. {B} toma 2. El resto toma 3. Así es la vida."],
     ["normal","{A}, cuenta hasta 10 en un idioma que no sea inglés ni español. Si no puedes, toma 3."],
-    ["normal","{A}, nombra 3 equipos del fútbol argentino en 5 segundos. Si no, toma 2."],
+    ["normal","{A}, nombra 5 equipos del fútbol argentino en 5 segundos. Si lo logras, reparte 4. Si no, toma 3."],
     ["normal","{A}, regálale 2 tragos al último que llegó a la previa."],
     ["normal","{A}, elige a alguien para un brindis entre los dos. Ambos toman 2."],
-    ["normal","{A}, apuesta 1 a 5 tragos y lanza una moneda con {B}. El que pierda toma lo apostado."],
+    ["normal","{A}, apuesta de 1 a 5 tragos y lanza una moneda con {B}. El que pierda toma lo apostado."],
     ["normal","{A}, haz la pose del libro de Exe por 5 segundos sin reírte. Si te ríes, toma 4. Si no, reparte 4."],
     ["normal","{A}, toma 1 trago por cada letra de tu primer nombre. Si tiene más de 6, te salvaste: solo 6."],
     ["normal","{A}, si alguna vez dijiste “esta es la última” y no lo fue, toma 2. Si no, mentiroso: toma 3."],
     ["normal","{A} y {B} toman 2 cada uno con los brazos entrelazados."],
     ["normal","{A}, nombra un jugador de Boca por cada trago que quieras repartir. Tienes 10 segundos."],
+    ["normal","Barman: {A} le prepara un trago a {B} con lo que haya en la mesa. {B} se toma 3 tragos de eso."],
+    ["normal","{A}, si hay fernet en la mesa, sírvete un dedo y tómatelo. Si no hay, toma 3 y reclama porque no hay fernet."],
 
     // ---- todos
     ["todos","Toman 1 los que tengan zapatillas blancas."],
@@ -240,122 +256,166 @@ button:focus-visible,input:focus-visible,[tabindex]:focus-visible{outline:3px so
     ["todos","Toman 3 los que alguna vez se hayan quedado dormidos en un carrete."],
     ["todos","Toman 2 los hinchas de Boca. Si hay alguno de River, toma 5."],
     ["todos","Toman 2 los que tengan menos de 30% de batería."],
-    ["todos","Toman 1 los que trabajan después de las 3 de la tarde. Exe reparte 3: él a esa hora ya está con el mate al sol."],
-    ["todos","El último en tocarse la nariz toma 3."],
-    ["todos","El último en levantar su vaso toma 2."],
-    ["todos","El último en pararse toma 4."],
-    ["todos","El último en gritar “¡wn chucha wn!” toma 3."],
+    ["todos","Toman 2 los que alguna vez tomaron mate o sol en horario de oficina. Exe toma 4: en su pega anterior era casi su trabajo."],
     ["todos","Todos toman 1. Exe toma 3."],
     ["todos","El más alto toma 2. El más bajo reparte 2."],
-    ["todos","Toman 2 los que alguna vez hayan perdido plata invirtiendo."],
-    ["todos","Toman 3 los que no hacen deporte. Exe reparte 3."],
+    ["todos","Toman 2 los que tengan acciones o cripto. Si alguno compró por un dato de José Olivieri, reparte 4."],
+    ["todos","Toman 2 los que no entrenaron hoy. Exe, si entrenaste hoy, reparte 4."],
     ["todos","Toman 2 los que estuvieron en el viaje a Miami. Si Jacob está, toma 4."],
     ["todos","Toman 1 los que tengan barba. Toman 2 los que no pueden tenerla."],
     ["todos","Toma 2 el que tenga el vaso más vacío, y lo rellena."],
+    ["todos","Toman 3 los que tengan fernet en el vaso. Si nadie tiene, todos toman 1 por no estar a la altura de Exe."],
+    ["todos","Toman 2 los que hayan probado un Negroni. Los que no saben qué es, toman 3."],
+    ["todos","Toman 2 los que alguna vez pensaron que alguien se parecía a su ex. Exe toma 4."],
+    ["todos","Toman 2 los que hayan vivido en otro país. Exe toma 3: Australia cuenta doble."],
+    ["todos","Toman 2 los que alguna vez jugaron rugby. Los que nunca, toman 1 por miedo."],
+    ["todos","Toman 2 los que tengan más de 50 mensajes sin leer."],
 
     // ---- yo nunca
-    ["yonunca","Yo nunca me he quedado dormido en un carrete. <b>Toman 2 los que sí.</b>"],
+    ["yonunca","Yo nunca me he quedado dormido en la micro o el metro y me pasé de parada. <b>Toman 2 los que sí.</b>"],
     ["yonunca","Yo nunca le he escrito a mi ex estando curado. <b>Toman 3 los que sí.</b>"],
-    ["yonunca","Yo nunca he llegado a trabajar sin dormir. <b>Toman 2 los que sí.</b>"],
+    ["yonunca","Yo nunca he exagerado en mi currículum. <b>Toman 2 los que sí.</b>"],
     ["yonunca","Yo nunca me he metido dentro de un cooler. <b>Toman 4 los que sí.</b>"],
-    ["yonunca","Yo nunca he perdido el celular en una fiesta. <b>Toman 2 los que sí.</b>"],
-    ["yonunca","Yo nunca he inventado una excusa para no ir a un carrete. <b>Toman 2 los que sí.</b>"],
-    ["yonunca","Yo nunca me he colado a una fiesta. <b>Toman 1 los que sí.</b>"],
-    ["yonunca","Yo nunca he terminado un triatlón. <b>Toman 3 los que sí.</b>"],
-    ["yonunca","Yo nunca he dicho “no tomo más” y seguí tomando. <b>Toman 2 los que sí.</b>"],
+    ["yonunca","Yo nunca he stalkeado fotos de hace años en el Instagram de alguien. <b>Toman 2 los que sí.</b>"],
+    ["yonunca","Yo nunca he terminado un triatlón o una corrida. <b>Toman 3 los que sí.</b>"],
+    ["yonunca","Yo nunca he perdido un vuelo. <b>Toman 3 los que sí.</b>"],
+    ["yonunca","Yo nunca he llorado viendo una película. <b>Toman 2 los que sí.</b>"],
+    ["yonunca","Yo nunca he dicho “voy llegando” sin haber salido de mi casa. <b>Toman 2 los que sí.</b>"],
     ["yonunca","Yo nunca me han echado de una disco. <b>Toman 3 los que sí.</b>"],
-    ["yonunca","Yo nunca he vomitado en un Uber o taxi. <b>Toman 4 los que sí.</b>"],
-    ["yonunca","Yo nunca he olvidado cómo llegué a mi casa. <b>Toman 2 los que sí.</b>"],
-    ["yonunca","Yo nunca he pasado una noche entera sin dormir carreteando. <b>Toman 1 los que sí.</b>"],
+    ["yonunca","Yo nunca he comido algo que se cayó al suelo. <b>Toman 1 los que sí.</b>"],
+    ["yonunca","Yo nunca he cantado en un karaoke. <b>Toman 1 los que sí.</b>"],
+    ["yonunca","Yo nunca me he comprado algo caro y me arrepentí al tiro. <b>Toman 2 los que sí.</b>"],
+    ["yonunca","Yo nunca he visto un partido en un estadio de otro país. <b>Toman 2 los que sí.</b>"],
+    ["yonunca","Yo nunca me he lesionado haciendo deporte. <b>Toman 2 los que sí.</b>"],
 
     // ---- cultura chupística
     ["cultura","Tema: <b>jugadores de Boca Juniors</b>. {A} parte y sigue a la derecha. El que repita o se quede pegado toma 3."],
     ["cultura","Tema: <b>marcas de cerveza</b>. {A} parte. El que se quede pegado toma 2."],
-    ["cultura","Tema: <b>jugadores de la Selección Argentina</b>. {A} parte. El que se quede pegado toma 3."],
+    ["cultura","Tema: <b>campeones del mundo con Argentina</b> (1978, 1986 o 2022). {A} parte. El que se quede pegado toma 3."],
     ["cultura","Tema: <b>canciones de reggaetón</b>. {A} parte. El que se quede pegado toma 2."],
     ["cultura","Tema: <b>países de África</b>. {A} parte. El que se quede pegado toma 4."],
     ["cultura","Tema: <b>cosas que se llevan a un asado</b>. {A} parte. El que se quede pegado toma 2."],
-    ["cultura","Tema: <b>tragos que llevan pisco</b>. {A} parte. El que se quede pegado toma 3."],
+    ["cultura","Tema: <b>tragos de coctelería</b> (Negroni, Espresso Martini…). {A} parte. El que se quede pegado toma 3."],
     ["cultura","Tema: <b>equipos de fútbol chilenos</b>. {A} parte. El que se quede pegado toma 2."],
     ["cultura","Tema: <b>marcas de autos</b>. {A} parte. El que se quede pegado toma 1."],
     ["cultura","Tema: <b>palabras que se dicen en Argentina y no en Chile</b>. {A} parte. El que se quede pegado toma 3."],
+    ["cultura","Tema: <b>ciudades de Australia</b>. {A} parte. El que se quede pegado toma 3."],
 
     // ---- duelos
-    ["duelo","{A} vs {B}: piedra, papel o tijera. El que pierda toma 3."],
-    ["duelo","{A} vs {B}: pulseo. El que pierda toma 4."],
-    ["duelo","{A} vs {B}: mírense a los ojos. El primero en reírse toma 3."],
-    ["duelo","{A} vs {B}: plancha abdominal. El primero en caer toma 5."],
+    ["duelo","Cachipún: {A} vs {B}. El que pierda toma 3."],
+    ["duelo","Pulseada: {A} y {B} apoyan el codo en la mesa y se toman de la mano. Gana el que baje el brazo del otro. El que pierda toma 4."],
+    ["duelo","Modo Cröl: {A} y {B} se miran a los ojos con la mirada intensa del libro de Exe. El primero en reírse toma 3."],
+    ["duelo","Flo dijo: {A} vs {B} en plancha. El primero en caer toma 5."],
+    ["duelo","Triatlón: {A} vs {B}. El primero en hacer 10 sentadillas, 10 flexiones y 10 saltos gana. El otro toma 4."],
     ["duelo","{A} vs {B}: alternen nombres de jugadores de Boca. El que se quede pegado toma 4."],
-    ["duelo","{A} vs {B}: pares o nones. El que pierda toma 2."],
-    ["duelo","{A} vs {B}: guerra de pulgares. El que pierda toma 3."],
-    ["duelo","{A} vs {B}: el primero en tomarse 3 tragos seguidos gana. El otro toma 2 más."],
+    ["duelo","Mercado de José Olivieri: {A} compra, {B} vende. Lancen una moneda: cara gana el que compra, sello el que vende. El que pierda toma 3."],
+    ["duelo","Fondo: {A} vs {B}. El primero en terminar su vaso gana y elige a alguien que se tome un vaso completo."],
 
     // ---- votaciones
     ["voto","¿Quién termina primero en el suelo esta noche? A la cuenta de 3 apunten. El elegido toma 3."],
     ["voto","¿Quién se manda el condoro de la noche? A la cuenta de 3 apunten. El elegido toma 4."],
-    ["voto","¿Quién llora primero en el matrimonio? A la cuenta de 3 apunten. El elegido toma 2."],
+    ["voto","¿Quién es el próximo en casarse después de Exe? A la cuenta de 3 apunten. El elegido toma 3."],
     ["voto","¿Quién es el peor para tomar? A la cuenta de 3 apunten. El elegido toma 3."],
     ["voto","¿Quién llega más tarde a todo? A la cuenta de 3 apunten. El elegido toma 2."],
-    ["voto","¿Quién es el más probable que termine en un cooler esta noche? A la cuenta de 3 apunten. El elegido toma un trago por cada dedo."],
+    ["voto","¿Quién tiene más pinta de terminar como Jacob en Miami? A la cuenta de 3 apunten. El elegido toma 3."],
+    ["voto","¿Quién sería el peor compañero de triatlón? A la cuenta de 3 apunten. El elegido toma 2."],
+
+    // ---- over / under (todos dicen over o under al mismo tiempo)
+    ["overunder","¿Con cuántas mujeres ha estado Exe? La línea es <b>15</b>. Todos dicen over o under al mismo tiempo y Exe revela. Los que fallen toman 3."],
+    ["overunder","¿Cuántas historias tiene Cröl, el libro de Exe? La línea es <b>15</b>. Todos dicen over o under. Los que fallen toman 2.","17 historias: ganó el over"],
+    ["overunder","¿Cuántos ingredientes lleva un Negroni? La línea es <b>4</b>. Todos dicen over o under. Los que fallen toman 2.","3 (gin, vermut rojo y Campari): ganó el under"],
+    ["overunder","¿Cuántos países ha visitado Exe? La línea es <b>15</b>. Todos dicen over o under y Exe revela. Los que fallen toman 2."],
+    ["overunder","¿Cuántos mensajes sin leer tiene {A} en WhatsApp? La línea es <b>30</b>. Todos dicen over o under y {A} muestra el celular. Los que fallen toman 2."],
+    ["overunder","¿Cuántas fotos tiene {A} en su galería? La línea es <b>5.000</b>. Todos dicen over o under y {A} muestra el celular. Los que fallen toman 2."],
+    ["overunder","¿Cuántos pasos lleva {A} hoy? La línea es <b>8.000</b>. Todos dicen over o under y {A} muestra el celular. Los que fallen toman 2."],
+    ["overunder","¿Cuántos años tenía Exe cuando se fue a estudiar a Australia? La línea es <b>21</b>. Todos dicen over o under y Exe revela. Los que fallen toman 2."],
+
+    // ---- a buscar
+    ["busqueda","El primero en mostrar algo azul y amarillo regala 5 tragos."],
+    ["busqueda","El primero en mostrar una moneda regala 5 tragos."],
+    ["busqueda","El primero en mostrar una tapa de botella regala 5 tragos."],
+    ["busqueda","El primero en mostrar una foto con Exe en su celular regala 5 tragos."],
+    ["busqueda","El primero en traer un hielo a la mesa regala 5 tragos."],
 
     // ---- castigo máximo
     ["castigo","{A}, termínate el vaso. Sin preguntas."],
-    ["castigo","El último en tirarse al suelo se termina el vaso."],
-    ["castigo","{A} vs {B}: piedra, papel o tijera. El que pierda se termina el vaso."],
-    ["castigo","El último que llegó a la previa se termina el vaso."],
+    ["castigo","El último en tocar algo blanco se termina el vaso."],
+    ["castigo","Cachipún: {A} vs {B}. El que pierda se termina el vaso."],
+    ["castigo","Moneda al aire: {A} elige cara o sello. Si acierta, {B} se termina el vaso. Si falla, se lo termina {A}."],
     ["castigo","Exe se termina el vaso. Es su despedida, wn chucha wn."],
+    ["castigo","{A} se toma un shot de fernet. Si no hay fernet, se termina el vaso."],
 
     // ---- especiales Exe
     ["exe","Exe reparte 6 tragos como quiera."],
-    ["exe","Exe, haz 15 flexiones. Si las haces, reparte 5. Si no, toma 5."],
-    ["exe","Exe elige a alguien para que se meta 10 segundos donde haya hielo. Si no quiere, toma 4."],
+    ["exe","Exe, haz 20 flexiones. Si las haces, reparte 5. Si no, toma 5."],
+    ["exe","Exe elige a alguien que aguante un cubo de hielo apretado en la mano por 15 segundos. Si lo suelta antes, toma 4. Si aguanta, reparte 4."],
     ["exe","Exe, nombra 5 jugadores de la Selección campeona en 10 segundos. Toma 1 por cada uno que te falte."],
     ["exe","Exe elige a su compañero de copete hasta el final: cada vez que Exe tome, esa persona toma también."],
     ["exe","Exe toma 2 porque sí."],
-
-    // ---- brindis
-    ["brindis","Por Sher, la mejor quiltra. Todos levantan el vaso y toman un trago por ella."],
-    ["brindis","Por Exe y Flo. Todos toman 2. Exe toma 4."],
-    ["brindis","Por Boca. Los hinchas toman 3, los demás toman 1 igual."]
+    ["exe","Dos verdades y una mentira: Exe dice tres cosas sobre su vida. Los que no adivinen la mentira toman 2. Si todos aciertan, Exe toma 4."],
+    ["exe","Fernet, Negroni o Espresso Martini: ¿cuál elige Exe para tomar el resto de su vida? Todos apuestan antes de que responda. Los que fallen toman 2."]
   ];
 
-  // solo modo equipos. "reto" lleva botones para marcar qué equipo ganó.
+  // ===== SALEN EN LOS DOS MODOS =====
+  const SHARED = [
+    ["brindis","Por Sher, la mejor quiltra. Todos levantan el vaso y toman un trago por ella."],
+    ["brindis","Por Exe y Flo. Todos toman 2. Exe toma 4."],
+    ["brindis","Por Boca. Los hinchas toman 3, los demás toman 1 igual."],
+    ["brindis","Por el fernet. Todos toman 1; los que tengan fernet toman 3."]
+  ];
+  const BOMBA = ["bomba","Se activó la bomba. En algún momento de los próximos minutos va a explotar: el que aparezca en la carta que esté en pantalla se toma el vaso entero. Si aparecen dos, mitad cada uno."];
+
+  // ===== MODO EQUIPOS (distintas a las individuales) =====
+  // "reto" lleva botones para marcar qué equipo ganó.
   const TEAM_CARDS = [
-    ["reto","Cultura chupística por equipos: <b>jugadores de Boca</b>. Alternen un nombre por equipo. El equipo que se quede pegado toma 3 cada uno."],
-    ["reto","Cultura chupística por equipos: <b>marcas de cerveza</b>. Alternen. El equipo que se quede pegado toma 2 cada uno."],
-    ["reto","Cultura chupística por equipos: <b>canciones de reggaetón</b>. Alternen. El equipo que se quede pegado toma 2 cada uno."],
-    ["reto","Un representante de cada equipo juega piedra, papel o tijera. El equipo perdedor toma 2 cada uno."],
-    ["reto","Pulseo: {A} contra {B}. El equipo perdedor toma 3 cada uno."],
-    ["reto","Relevo: en cada equipo, uno por uno, toman un trago y dejan el vaso en la mesa antes de que siga el siguiente. El equipo que termine último toma 2 más cada uno."],
+    ["reto","Cultura chupística por equipos: <b>equipos de la Premier League</b>. Alternen un nombre por equipo. El equipo que se quede pegado toma 3 cada uno."],
+    ["reto","Cultura chupística por equipos: <b>marcas de ropa deportiva</b>. Alternen. El equipo que se quede pegado toma 2 cada uno."],
+    ["reto","Cultura chupística por equipos: <b>series de Netflix</b>. Alternen. El equipo que se quede pegado toma 2 cada uno."],
+    ["reto","Cultura chupística por equipos: <b>ciudades de Argentina</b>. Alternen. El equipo que se quede pegado toma 3 cada uno."],
+    ["reto","Cachipún de representantes: {A} contra {B}. El equipo perdedor toma 2 cada uno."],
+    ["reto","Pulseada: {A} contra {B}, codo en la mesa y tomados de la mano. Gana el que baje el brazo del otro. El equipo perdedor toma 3 cada uno."],
+    ["reto","Flip the cup: cada equipo en fila con un vaso con un poco de trago. Uno por uno se lo toman, lo dejan en el borde de la mesa y lo dan vuelta de un toque hasta que quede boca abajo; recién ahí sigue el siguiente. El equipo que termine último toma 2 más cada uno."],
+    ["reto","Beer pong rápido: {A} contra {B}, 3 vasos por lado. El primero en meter la pelota en los 3 vasos del rival gana. El equipo perdedor toma 3 cada uno."],
+    ["reto","Wordle del día: un representante de cada equipo lo juega en su celular al mismo tiempo, con ayuda de su equipo. El que lo resuelva primero gana. El otro equipo toma 3 cada uno."],
     ["reto","Plancha en equipo: todos al suelo. El equipo que se quede primero sin nadie en plancha toma 3 cada uno."],
-    ["reto","Penales con una pelota de papel: un pateador de cada equipo, el arquero lo pone el rival. Tres tiros cada uno. El equipo con menos goles toma 2 cada uno."],
-    ["reto","{A} y {B} se miran a los ojos. El primero en reírse hace perder a su equipo: 2 tragos cada uno."],
-    ["reto","Trivia: ¿en qué año ganó Argentina su primer Mundial? El primer equipo en gritar la respuesta correcta gana. El otro toma 2 cada uno."],
-    ["reto","Trivia: ¿cuántas Copas Libertadores tiene Boca? Cada equipo dice un número. El que quede más lejos toma 3 cada uno."],
-    ["reto","Trivia: ¿cuántos kilómetros suma en total un triatlón olímpico? El equipo que quede más lejos toma 2 cada uno."],
-    ["reto","Guerra de pulgares: {A} contra {B}. El equipo perdedor toma 2 cada uno."],
-    ["reto","Castigo máximo: {A} contra {B}, piedra, papel o tijera. Todo el equipo perdedor se termina el vaso."],
+    ["reto","Flo dijo: sentadillas en equipo. El equipo que sume más sentadillas en 30 segundos gana. El otro toma 2 cada uno."],
+    ["reto","Trivia: ¿en qué año ganó Argentina su primer Mundial? El primer equipo en gritar la respuesta correcta gana. El otro toma 2 cada uno.","1978"],
+    ["reto","Over/under por equipos: ¿con cuántas mujeres ha estado Exe? La línea es <b>15</b>. Cada equipo elige over o under y Exe revela. El que falle toma 3 cada uno."],
+    ["reto","Over/under por equipos: ¿cuántos kilómetros suma un triatlón olímpico? La línea es <b>50</b>. El equipo que falle toma 2 cada uno.","51,5 km: ganó el over"],
+    ["reto","Over/under por equipos: ¿cuántas Copas Libertadores tiene Boca? La línea es <b>5,5</b>. El equipo que falle toma 3 cada uno.","6: ganó el over"],
+    ["reto","Over/under por equipos: ¿cuántos goles hizo Messi en el Mundial 2022? La línea es <b>6,5</b>. El equipo que falle toma 2 cada uno.","7: ganó el over"],
+    ["reto","Dos verdades y una mentira: Exe dice tres cosas sobre su vida y cada equipo elige cuál es la mentira. El que falle toma 3 cada uno."],
+    ["reto","¡A buscar! El primer equipo en traer a la mesa algo azul y amarillo gana. El otro toma 2 cada uno."],
+    ["reto","¡A buscar! El primer equipo en juntar 5 tapas de botella gana. El otro toma 2 cada uno."],
+    ["reto","Castigo máximo: cachipún entre {A} y {B}. Todo el equipo perdedor se termina el vaso."],
+    ["reto","Fondo: {A} contra {B}. El primero en terminar su vaso gana, y su equipo elige a alguien del otro equipo para que se tome un vaso completo."],
     ["equipo","Todo {T} toma 2."],
     ["equipo","{T} elige a alguien de {O} para que tome 4."],
     ["equipo","El equipo que vaya perdiendo toma 3 cada uno. Si van empatados, toman todos 1."],
     ["equipo","{O} reparte 6 tragos entre los de {T}."],
-    ["equipo","{A} se cambia de bando por una carta: toma con {O} la próxima vez que pierdan. Después vuelve a casa."]
+    ["equipo","{A} se cambia de bando por una carta: toma con {O} la próxima vez que pierdan. Después vuelve a casa."],
+    ["equipo","Toman 2 los de {T} que tengan fernet en el vaso. Si ninguno tiene, todo {T} toma 1."],
+    ["equipo","{T} brinda por {O}. Los dos equipos toman 2."]
   ];
 
+  const TAPINHA = ["Tapinha: si alguien le pasa algo a otra persona (un vaso, el celular, lo que sea) y otro alcanza a gritar “¡tapinha!”, el que lo recibió se toma una tapita de cualquier trago.","Se acabó la tapinha. Ya se pueden pasar cosas tranquilos."];
   const VIRUS = [
     ["{A} habla con acento argentino hasta que termine el virus. Cada error es 1 trago.","{A} puede volver a hablar como chileno."],
-    ["Nadie puede decir “Mikele”. El que la nombre toma 3.","Ya se puede decir Mikele. Con cuidado."],
     ["Cada vez que alguien diga “Boca”, todos gritan “¡Dale Booo!”. El último toma 1.","Se acabó el Dale Boo obligatorio."],
     ["Todos deben terminar sus frases con “mate”, como en Australia. El que se le olvide toma 1.","Ya no hay que decir mate."],
-    ["Prohibido decir nombres: a todos se les dice “wn”. El que diga un nombre toma 2.","Ya pueden volver a decir nombres."],
+    ["Prohibido decir nombres: a todos se les dice “wn chucha”. El que diga un nombre toma 2.","Ya pueden volver a decir nombres."],
     ["El que toque su celular toma 3.","Ya pueden usar el celular."],
     ["Solo se puede tomar con la mano izquierda. El que tome con la derecha, toma 2 más.","Ya se puede tomar con cualquier mano."],
     ["{A} es el maestro del pulgar: cuando ponga el pulgar en la mesa, todos tienen que hacer lo mismo. El último toma 2.","{A} ya no es el maestro del pulgar."],
-    ["Exe no puede decir “sí” ni “no”. Cada vez que lo diga, toma 1.","Exe ya puede decir sí. Pronto se lo dice a Flo en el altar."]
+    ["Exe no puede decir “sí” ni “no”. Cada vez que lo diga, toma 1.","Exe ya puede decir sí. Pronto se lo dice a Flo en el altar."],
+    ["Cada vez que alguien diga “Exe”, toma 1. Exe incluido.","Ya se puede decir Exe."],
+    TAPINHA
   ];
   const TEAM_VIRUS = [
     ["Los de {T} solo pueden hablar con acento argentino. Cada error, 1 trago para todo su equipo.","{T} puede volver a hablar normal."],
-    ["Cuando tome alguien de {O}, todo {T} grita “¡wn chucha wn!”. El último en gritar toma 1.","Se acabó el grito. Por ahora."]
+    ["Cuando tome alguien de {O}, todo {T} grita “¡wn chucha wn!”. El último en gritar toma 1.","Se acabó el grito. Por ahora."],
+    ["Cada vez que alguien de {T} diga un garabato, todo su equipo toma 1.","{T} ya puede decir garabatos."],
+    TAPINHA
   ];
 
   // ---------- estado
@@ -445,19 +505,23 @@ button:focus-visible,input:focus-visible,[tabindex]:focus-visible{outline:3px so
     }
   }
   function buildDeck(){
-    let base;
+    clearBomb();
+    const mk = c => ({kind:c[0], raw:c[1], ans:c[2]});
+    let base, vpool;
     if(mode==="eq"){
-      base = shuffle(CARDS.map(c=>({kind:c[0], raw:c[1]}))).slice(0,36)
-        .concat(TEAM_CARDS.map(c=>({kind:c[0], raw:c[1]})));
-      base = shuffle(base);
+      base = shuffle(TEAM_CARDS.map(mk).concat(SHARED.map(mk)));
+      vpool = TEAM_VIRUS.slice();
     } else {
-      base = shuffle(CARDS.map(c=>({kind:c[0], raw:c[1]}))).slice(0,55);
+      base = shuffle(CARDS.map(mk)).slice(0,52).concat(SHARED.map(mk));
+      base = shuffle(base);
+      vpool = shuffle(VIRUS.slice()).slice(0,5);
     }
-    const vpool = mode==="eq" ? shuffle(VIRUS.slice()).slice(0,3).concat(TEAM_VIRUS) : shuffle(VIRUS.slice()).slice(0,5);
     vpool.forEach(v=>{
-      const pos = 2 + Math.floor(Math.random()*(base.length-16));
+      const pos = 2 + Math.floor(Math.random()*(base.length-10));
       base.splice(pos,0,{kind:"virus", raw:v[0], endRaw:v[1]});
     });
+    // una bomba por partida, en la primera mitad
+    base.splice(3 + Math.floor(Math.random()*(base.length/2)), 0, mk(BOMBA));
     base.forEach(assign);
     base.push({kind:"fin"});
     deck = base; idx = 0;
@@ -481,9 +545,10 @@ button:focus-visible,input:focus-visible,[tabindex]:focus-visible{outline:3px so
     const c = deck[idx];
     if(c.kind==="virus" && !c.spawned){
       c.spawned = true;
-      const at = Math.min(idx + 5 + Math.floor(Math.random()*6), deck.length-1);
+      const at = Math.min(idx + 3 + Math.floor(Math.random()*12), deck.length-1);
       deck.splice(at,0,{kind:"finvirus", raw:c.endRaw, a:c.a, b:c.b, t:c.t});
     }
+    if(c.kind==="bomba" && !c.armed){ c.armed = true; armBomb(); }
     const [label, fam] = KINDS[c.kind];
     game.className = "on fam-" + fam;
     let html = "";
@@ -500,6 +565,7 @@ button:focus-visible,input:focus-visible,[tabindex]:focus-visible{outline:3px so
       }
     } else {
       html = '<p class="kind">' + label + '</p><p class="text">' + fill(c, c.raw) + "</p>";
+      if(c.ans && c.revealed) html += '<p class="ans">Respuesta: ' + c.ans + "</p>";
       if(hasWinner(c)){
         const opts = (c.raw.includes("{A}") && c.raw.includes("{B}"))
           ? [[c.t, c.a + " (" + teamNames[c.t] + ")"], [1-c.t, c.b + " (" + teamNames[1-c.t] + ")"]]
@@ -512,7 +578,7 @@ button:focus-visible,input:focus-visible,[tabindex]:focus-visible{outline:3px so
     wrap.classList.remove("pop"); void wrap.offsetWidth; wrap.classList.add("pop");
     if(mode==="eq" && c.kind!=="fin"){ const s=scores(); count.textContent = teamNames[0]+" "+s[0]+" – "+s[1]+" "+teamNames[1]; }
     else count.textContent = c.kind==="fin" ? "" : (idx+1) + " / " + (deck.length-1);
-    $("tap").textContent = c.kind==="fin" ? "Toca para jugar de nuevo" : (hasWinner(c) ? "Marquen al ganador o toquen para seguir" : "Toca para seguir");
+    $("tap").textContent = c.kind==="fin" ? "Toca para jugar de nuevo" : (c.ans && !c.revealed ? "Toca para ver la respuesta" : (hasWinner(c) ? "Marquen al ganador o toquen para seguir" : "Toca para seguir"));
   }
   wrap.addEventListener("click", e=>{
     const b = e.target.closest("[data-w]"); if(!b) return;
@@ -520,8 +586,42 @@ button:focus-visible,input:focus-visible,[tabindex]:focus-visible{outline:3px so
     deck[idx].winner = Number(b.dataset.w);
     idx++; show();
   });
+  // ---------- bomba
+  let bombTimer = null;
+  function clearBomb(){ if(bombTimer){ clearTimeout(bombTimer); bombTimer = null; } }
+  function armBomb(){
+    clearBomb();
+    const secs = 120 + Math.floor(Math.random()*300); // entre 2 y 7 minutos
+    bombTimer = setTimeout(boom, secs*1000);
+  }
+  function peopleOn(c){
+    const names = [];
+    if(!c || !c.raw) return names;
+    if(c.raw.includes("{A}") && c.a) names.push(c.a);
+    if(c.raw.includes("{B}") && c.b && !names.includes(c.b)) names.push(c.b);
+    if(/\bExe\b/.test(c.raw)){
+      const exe = players.find(p=>/^exe/i.test(p)) || "Exe";
+      if(!names.includes(exe)) names.push(exe);
+    }
+    return names;
+  }
+  function boom(){
+    bombTimer = null;
+    if(!game.classList.contains("on")) return;
+    const n = peopleOn(deck[idx]);
+    let txt;
+    if(n.length===0) txt = "Nadie aparece en la carta: todos toman 3.";
+    else if(n.length===1) txt = "<b>" + esc(n[0]) + "</b> se toma el vaso entero.";
+    else txt = n.map(x=>"<b>"+esc(x)+"</b>").join(" y ") + " se toman el vaso a medias.";
+    $("boomText").innerHTML = txt;
+    $("boom").hidden = false;
+    try{ navigator.vibrate && navigator.vibrate([300,100,300,100,600]); }catch(e){}
+  }
+  $("boom").addEventListener("click", e=>{ e.stopPropagation(); $("boom").hidden = true; });
+
   function next(){
     if(deck[idx].kind==="fin"){ buildDeck(); show(); return; }
+    if(deck[idx].ans && !deck[idx].revealed){ deck[idx].revealed = true; show(); return; }
     idx++; show();
   }
   function startGame(){
@@ -531,7 +631,7 @@ button:focus-visible,input:focus-visible,[tabindex]:focus-visible{outline:3px so
   $("stage").addEventListener("keydown", e=>{ if(e.target.id==="stage" && (e.key==="Enter"||e.key===" ")){ e.preventDefault(); next(); } });
   $("backBtn").addEventListener("click", e=>{ e.stopPropagation(); if(idx>0){ idx--; show(); } });
   $("quitBtn").addEventListener("click", e=>{
-    e.stopPropagation(); game.className = ""; teamsScreen.hidden = true; home.hidden = false;
+    e.stopPropagation(); clearBomb(); game.className = ""; teamsScreen.hidden = true; home.hidden = false;
   });
 
   renderMode();
