@@ -4,14 +4,14 @@ Juego para tomar estilo Picolo, hecho para la previa de la despedida de soltero 
 
 ## Modos
 
-- **Individual:** cartas de retos, “yo nunca”, cultura chupística, virus, duelos, votaciones, brindis y especiales de Exe. Mazo de 55 cartas al azar por partida.
+- **Individual:** cartas de retos rápidos, “toman los que…”, “yo nunca”, cultura chupística, virus, duelos, votaciones, castigos máximos (terminarse el vaso), brindis y especiales de Exe. Mazo de 55 cartas al azar por partida.
 - **2 equipos:** se ingresan los jugadores (mínimo 4), se sortean dos equipos al azar (se les puede cambiar el nombre o volver a sortear) y hay retos de equipo con marcador. Al final, el equipo perdedor toma.
 
 ## Cómo jugar
 
 1. Agregar a los jugadores y elegir el modo.
 2. Tocar la pantalla para pasar de carta; “Atrás” vuelve a la anterior.
-3. En los retos de equipo, marcar qué equipo ganó para sumar al marcador.
+3. En modo equipos, en los retos y duelos se marca qué equipo ganó para sumar al marcador.
 
 Los virus duran entre 5 y 10 cartas y luego aparece su carta de término.
 
