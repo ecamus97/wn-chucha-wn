@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240">
+  <defs><clipPath id="c"><circle cx="120" cy="120" r="104"/></clipPath><clipPath id="camiseta"><path d="M24 240 C34 194 66 174 96 168 L144 168 C174 174 206 194 216 240 Z"/></clipPath></defs>
+  <circle cx="120" cy="120" r="116" fill="#0A2A6E"/>
+  <circle cx="120" cy="120" r="104" fill="#F2B705"/>
+  <g clip-path="url(#c)" stroke="#0A2A6E" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M104 136 L104 172 M136 136 L136 172" stroke-width="4" fill="none"/>
+    <path d="M24 240 C34 194 66 174 96 168 Q120 186 144 168 C174 174 206 194 216 240 Z" fill="#0A2A6E" stroke-width="4"/>
+    <rect x="0" y="190" width="240" height="20" fill="#F2B705" clip-path="url(#camiseta)" stroke="none"/>
+    <path d="M20 190 H220 M20 210 H220" fill="none" stroke-width="3" clip-path="url(#camiseta)"/>
+    <path d="M84 86 C84 122 98 146 120 151 C142 146 156 122 156 86" fill="#F2B705" stroke-width="4.5"/>
+    <path d="M88 112 C92 132 104 145 120 148 C136 145 148 132 152 112 C146 124 140 126 132 126 Q120 122 108 126 C100 126 94 124 88 112 Z" fill="#0A2A6E" opacity=".2" stroke="none"/>
+    <path d="M85 98 C76 96 75 112 87 115 M155 98 C164 96 165 112 153 115" fill="none" stroke-width="4"/>
+    <path d="M82 98 C72 80 72 60 84 46 C86 38 92 32 100 30 Q96 24 90 18 Q106 19 114 27 Q119 21 126 13 Q132 21 136 26 Q148 24 156 30 Q162 26 171 26 Q166 33 166 40 C169 49 170 56 174 63 Q167 64 168 72 C168 84 165 90 160 98 C157 86 152 78 146 74 C140 79 132 79 126 74 C120 81 110 82 104 76 L100 85 C97 79 94 75 92 72 C88 80 85 88 82 98 Z M118 75 C116 85 108 91 101 93 C109 86 111 80 111 76 Z" fill="#0A2A6E" stroke-width="2.5"/>
+    <path d="M93 91 Q104 85 114 90 M126 90 Q136 85 147 91" fill="none" stroke-width="5.5"/>
+    <circle cx="105" cy="103" r="3.2" fill="#0A2A6E" stroke="none"/>
+    <circle cx="135" cy="103" r="3.2" fill="#0A2A6E" stroke="none"/>
+    <path d="M95 101 Q104 98 114 101 M126 101 Q136 98 145 101" fill="none" stroke-width="4.5"/>
+    <path d="M98 107 Q105 109 112 107 M128 107 Q135 109 142 107" fill="none" stroke-width="2"/>
+    <path d="M121 104 L117 121 Q121 125 127 122" fill="none" stroke-width="3.5"/>
+    <path d="M108 133 Q120 129 133 133" fill="none" stroke-width="3.5"/>
+    <path d="M113 138 Q120 141 128 138" fill="none" stroke-width="2.6"/>
+
+  </g>
+</svg>

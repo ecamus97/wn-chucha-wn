@@ -1,0 +1,17 @@
+{
+  "name": "Wn Chucha Wn",
+  "short_name": "Wn Chucha Wn",
+  "description": "Juego para la previa de la despedida de Exe. By Watacas.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#061A47",
+  "theme_color": "#0A2A6E",
+  "lang": "es",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

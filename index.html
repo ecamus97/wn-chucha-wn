@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Wn Chucha Wn</title>
+<meta name="theme-color" content="#0A2A6E">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Wn Chucha Wn">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bungee&family=Barlow:wght@500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --azul:#0A2A6E; --azul-hondo:#061A47; --azul-claro:#1B4BA8; --oro:#F2B705; --oro-claro:#FFD23F; --blanco:#FFFFFF;
+  --bg:#FFF4CC; --ink:#061A47; --muted:#3D4B78; --field:#FFFFFF; --line:#E2C45E; --chip:#0A2A6E; --chip-ink:#FFFFFF;
+  color-scheme: light;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#061A47; --ink:#FFF4CC; --muted:#AFC0E8; --field:#0E2A66; --line:#2B4C93; --chip:#F2B705; --chip-ink:#061A47;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#061A47; --ink:#FFF4CC; --muted:#AFC0E8; --field:#0E2A66; --line:#2B4C93; --chip:#F2B705; --chip-ink:#061A47;
+  color-scheme: dark;
+}
+*,*::before,*::after{box-sizing:inherit}
+html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;min-height:100%;background:var(--bg);color:var(--ink);
+  font-family:"Barlow", system-ui, -apple-system, "Segoe UI", sans-serif;-webkit-tap-highlight-color:transparent}
+button{font:inherit;cursor:pointer}
+button:focus-visible,input:focus-visible,[tabindex]:focus-visible{outline:3px solid var(--oro);outline-offset:3px}
+.screen{max-width:540px;margin:0 auto;padding:24px 20px 44px;display:flex;flex-direction:column;align-items:center}
+[hidden]{display:none!important}
+
+/* logo + título */
+.crest{width:min(56vw,220px);height:auto;display:block;filter:drop-shadow(0 6px 0 rgba(6,26,71,.25))}
+.wordmark{margin:14px 0 4px;text-align:center;font-family:"Bungee", Impact, "Arial Black", sans-serif;font-weight:400;line-height:.86;transform:rotate(-4deg)}
+.wordmark span{display:block;color:var(--oro);-webkit-text-stroke:3px var(--azul-hondo);paint-order:stroke fill;text-shadow:5px 5px 0 var(--azul-hondo)}
+.wordmark .w1,.wordmark .w3{font-size:clamp(2.2rem,11vw,3.3rem)}
+.wordmark .w2{font-size:clamp(3.4rem,18vw,5.4rem);letter-spacing:-.01em}
+.wordmark .w1{transform:translateX(-18%)}
+.wordmark .w3{transform:translateX(18%)}
+.sub{margin:18px 0 22px;color:var(--muted);font-weight:700;text-align:center}
+
+/* modo */
+.modes{display:grid;grid-template-columns:1fr 1fr;gap:0;width:100%;border:3px solid var(--azul);border-radius:14px;overflow:hidden;margin-bottom:22px}
+.modes button{border:0;padding:14px 8px;background:transparent;color:var(--ink);font-weight:800;font-size:1.05rem}
+.modes button[aria-pressed="true"]{background:var(--azul);color:var(--oro)}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .modes{border-color:var(--oro)}
+  :root:not([data-theme="light"]) .modes button[aria-pressed="true"]{background:var(--oro);color:var(--azul-hondo)}}
+:root[data-theme="dark"] .modes{border-color:var(--oro)}
+:root[data-theme="dark"] .modes button[aria-pressed="true"]{background:var(--oro);color:var(--azul-hondo)}
+
+.players{width:100%}
+.players h2{font-size:1.05rem;margin:0 0 10px;font-weight:800}
+.add{display:flex;gap:8px}
+.add input{flex:1;min-width:0;padding:14px;border-radius:12px;border:2px solid var(--line);background:var(--field);color:var(--ink);font:inherit;font-size:1.05rem}
+.add button{padding:0 18px;border-radius:12px;border:0;background:var(--oro);color:var(--azul-hondo);font-weight:800;font-size:1.05rem}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0 6px;padding:0;list-style:none}
+.chips li{display:flex;align-items:center;gap:6px;padding:7px 8px 7px 14px;border-radius:999px;background:var(--chip);color:var(--chip-ink);font-weight:700}
+.chips li button{width:26px;height:26px;border-radius:50%;border:0;background:rgba(127,127,127,.25);color:inherit;line-height:1;font-size:1rem}
+.hint{color:var(--muted);font-size:.92rem;min-height:1.3em;margin:4px 0 0}
+.play{margin-top:22px;width:100%;padding:16px;border:3px solid var(--azul-hondo);border-radius:16px;background:var(--oro);color:var(--azul-hondo);
+  font-family:"Bungee", Impact, sans-serif;font-size:1.5rem;box-shadow:0 6px 0 var(--azul-hondo)}
+.play:active{transform:translateY(3px);box-shadow:0 3px 0 var(--azul-hondo)}
+.play:disabled{opacity:.45;box-shadow:none}
+.ghost{margin-top:12px;background:none;border:0;color:var(--muted);font-weight:800;text-decoration:underline;padding:8px}
+.fine{color:var(--muted);font-size:.85rem;text-align:center;margin-top:22px;max-width:36ch}
+
+/* equipos */
+.teams{display:grid;grid-template-columns:1fr 1fr;gap:12px;width:100%;margin-top:6px}
+.team{border-radius:16px;padding:14px 12px 16px}
+.team:nth-child(1){background:var(--azul);color:#fff}
+.team:nth-child(2){background:var(--oro);color:var(--azul-hondo)}
+.team input{width:100%;background:transparent;border:0;border-bottom:2px dashed currentColor;color:inherit;font-family:"Bungee",Impact,sans-serif;font-size:1rem;padding:4px 0 6px;margin-bottom:10px}
+.team ul{list-style:none;margin:0;padding:0;font-weight:700;font-size:1.05rem;line-height:1.7}
+.teams-title{font-family:"Bungee",Impact,sans-serif;font-size:1.8rem;margin:10px 0 4px;text-align:center}
+
+/* juego */
+#game{position:fixed;inset:0;display:none;flex-direction:column;transition:background-color .3s ease;
+  padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+#game.on{display:flex}
+.bar{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:12px 14px}
+.bar button{background:rgba(0,0,0,.2);color:inherit;border:0;border-radius:999px;padding:9px 15px;font-weight:800}
+.count{font-weight:700;opacity:.85;font-size:.9rem;text-align:center}
+.stage{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:10px 24px 28px;text-align:center;cursor:pointer;user-select:none;overflow:auto}
+.kind{font-family:"Bungee",Impact,sans-serif;font-size:clamp(1.2rem,5.6vw,1.8rem);line-height:1.05;margin:0 0 22px;padding:8px 16px 6px;border-radius:8px;transform:rotate(-3deg);display:inline-block}
+.text{font-size:clamp(1.35rem,5.6vw,2.05rem);line-height:1.3;font-weight:800;max-width:30ch;margin:0}
+.tap{margin-top:30px;font-size:.9rem;opacity:.7;font-weight:700}
+.win{display:flex;gap:10px;margin-top:26px;flex-wrap:wrap;justify-content:center}
+.win button{border-radius:12px;padding:12px 16px;font-weight:800;font-size:1rem;border:3px solid currentColor;background:transparent;color:inherit}
+.win button[aria-pressed="true"]{background:var(--azul-hondo);color:var(--oro);border-color:var(--azul-hondo)}
+.pop{animation:pop .26s ease-out}
+@keyframes pop{from{transform:scale(.95);opacity:0}to{transform:none;opacity:1}}
+@media (prefers-reduced-motion: reduce){.pop{animation:none}#game{transition:none}}
+
+/* familias de color: azul y oro */
+.fam-azul{background:var(--azul);color:#fff}
+.fam-azul .kind{background:var(--oro);color:var(--azul-hondo)}
+.fam-azul .text b{color:var(--oro)}
+.fam-hondo{background:var(--azul-hondo);color:#fff}
+.fam-hondo .kind{background:#fff;color:var(--azul-hondo)}
+.fam-hondo .text b{color:var(--oro)}
+.fam-oro{background:var(--oro);color:var(--azul-hondo)}
+.fam-oro .kind{background:var(--azul);color:var(--oro)}
+.fam-oro .text b{color:var(--azul-claro)}
+.fam-oro .bar button{background:rgba(6,26,71,.14)}
+.fam-banda{background:linear-gradient(var(--azul) 0 22%, var(--oro) 22% 30%, var(--azul) 30%);color:#fff}
+.fam-banda .kind{background:var(--oro);color:var(--azul-hondo)}
+.fam-banda .text b{color:var(--oro)}
+.endcrest{width:140px;margin-bottom:8px}
+.score{font-family:"Bungee",Impact,sans-serif;font-size:1.3rem;margin:0 0 14px}
+</style>
+</head>
+<body>
+
+<main id="home" class="screen">
+  <svg class="crest" role="img" aria-label="Logo de Exe" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240">
+  <defs><clipPath id="c"><circle cx="120" cy="120" r="104"/></clipPath><clipPath id="camiseta"><path d="M24 240 C34 194 66 174 96 168 L144 168 C174 174 206 194 216 240 Z"/></clipPath></defs>
+  <circle cx="120" cy="120" r="116" fill="#0A2A6E"/>
+  <circle cx="120" cy="120" r="104" fill="#F2B705"/>
+  <g clip-path="url(#c)" stroke="#0A2A6E" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M104 136 L104 172 M136 136 L136 172" stroke-width="4" fill="none"/>
+    <path d="M24 240 C34 194 66 174 96 168 Q120 186 144 168 C174 174 206 194 216 240 Z" fill="#0A2A6E" stroke-width="4"/>
+    <rect x="0" y="190" width="240" height="20" fill="#F2B705" clip-path="url(#camiseta)" stroke="none"/>
+    <path d="M20 190 H220 M20 210 H220" fill="none" stroke-width="3" clip-path="url(#camiseta)"/>
+    <path d="M84 86 C84 122 98 146 120 151 C142 146 156 122 156 86" fill="#F2B705" stroke-width="4.5"/>
+    <path d="M88 112 C92 132 104 145 120 148 C136 145 148 132 152 112 C146 124 140 126 132 126 Q120 122 108 126 C100 126 94 124 88 112 Z" fill="#0A2A6E" opacity=".2" stroke="none"/>
+    <path d="M85 98 C76 96 75 112 87 115 M155 98 C164 96 165 112 153 115" fill="none" stroke-width="4"/>
+    <path d="M82 98 C72 80 72 60 84 46 C86 38 92 32 100 30 Q96 24 90 18 Q106 19 114 27 Q119 21 126 13 Q132 21 136 26 Q148 24 156 30 Q162 26 171 26 Q166 33 166 40 C169 49 170 56 174 63 Q167 64 168 72 C168 84 165 90 160 98 C157 86 152 78 146 74 C140 79 132 79 126 74 C120 81 110 82 104 76 L100 85 C97 79 94 75 92 72 C88 80 85 88 82 98 Z M118 75 C116 85 108 91 101 93 C109 86 111 80 111 76 Z" fill="#0A2A6E" stroke-width="2.5"/>
+    <path d="M93 91 Q104 85 114 90 M126 90 Q136 85 147 91" fill="none" stroke-width="5.5"/>
+    <circle cx="105" cy="103" r="3.2" fill="#0A2A6E" stroke="none"/>
+    <circle cx="135" cy="103" r="3.2" fill="#0A2A6E" stroke="none"/>
+    <path d="M95 101 Q104 98 114 101 M126 101 Q136 98 145 101" fill="none" stroke-width="4.5"/>
+    <path d="M98 107 Q105 109 112 107 M128 107 Q135 109 142 107" fill="none" stroke-width="2"/>
+    <path d="M121 104 L117 121 Q121 125 127 122" fill="none" stroke-width="3.5"/>
+    <path d="M108 133 Q120 129 133 133" fill="none" stroke-width="3.5"/>
+    <path d="M113 138 Q120 141 128 138" fill="none" stroke-width="2.6"/>
+
+  </g>
+</svg>
+  <h1 class="wordmark" aria-label="Wn Chucha Wn"><span class="w1">Wn</span><span class="w2">Chucha</span><span class="w3">Wn</span></h1>
+  <p class="sub">By Watacas</p>
+
+  <div class="modes" role="group" aria-label="Modo de juego">
+    <button type="button" id="mInd" aria-pressed="true">Individual</button>
+    <button type="button" id="mEq" aria-pressed="false">2 equipos</button>
+  </div>
+
+  <section class="players" aria-labelledby="ph">
+    <h2 id="ph">¿Quiénes juegan?</h2>
+    <form class="add" id="addForm">
+      <input id="nameIn" type="text" placeholder="Nombre" maxlength="18" autocomplete="off" aria-label="Nombre del jugador">
+      <button type="submit">Agregar</button>
+    </form>
+    <ul class="chips" id="chips"></ul>
+    <p class="hint" id="hint"></p>
+  </section>
+
+  <button class="play" id="playBtn" disabled>Empezar</button>
+</main>
+
+<main id="teamsScreen" class="screen" hidden>
+  <p class="teams-title">Equipos</p>
+  <p class="sub" style="margin-top:0">Sorteados al azar. Pueden cambiarles el nombre.</p>
+  <div class="teams">
+    <div class="team"><input id="t0" aria-label="Nombre del equipo 1" maxlength="20"><ul id="l0"></ul></div>
+    <div class="team"><input id="t1" aria-label="Nombre del equipo 2" maxlength="20"><ul id="l1"></ul></div>
+  </div>
+  <button class="play" id="teamsPlay">Empezar</button>
+  <button class="ghost" id="reroll">Sortear de nuevo</button>
+  <button class="ghost" id="teamsBack" style="margin-top:0">Volver</button>
+</main>
+
+<section id="game" aria-live="polite">
+  <div class="bar">
+    <button id="quitBtn">Salir</button>
+    <span class="count" id="count"></span>
+    <button id="backBtn">Atrás</button>
+  </div>
+  <div class="stage" id="stage" role="button" tabindex="0" aria-label="Siguiente carta">
+    <div id="cardWrap"></div>
+    <p class="tap" id="tap">Toca para seguir</p>
+  </div>
+</section>
+
+<script>
+(function(){
+  "use strict";
+
+  const KINDS = {
+    normal:["Wn chucha wn","azul"], todos:["Todos","hondo"], yonunca:["Yo nunca","banda"],
+    cultura:["Cultura chupística","oro"], virus:["Virus","oro"], finvirus:["Fin del virus","hondo"],
+    duelo:["Duelo","oro"], voto:["Votación","banda"], exe:["Especial Exe","oro"],
+    brindis:["Brindis","hondo"], equipo:["Equipos","azul"], reto:["Reto de equipos","oro"], fin:["Se acabó","hondo"]
+  };
+
+  // {A}/{B}: jugadores al azar · {T}/{O}: equipos (solo modo equipos)
+  const CARDS = [
+    ["normal","{A}, imita la pose de la foto del libro de Exe: mano en el mentón y mirada intensa. Si alguien se ríe, ese toma 2. Si nadie se ríe, {A} reparte 3."],
+    ["normal","{A}, cuenta la historia del cooler en 30 segundos. Si Exe te corrige un detalle, tomas 2."],
+    ["normal","Triatlón chupístico: {A} toma un trago nadando (brazadas), otro pedaleando y otro trotando en el lugar."],
+    ["normal","{A}, recomienda una acción para invertir. Si Exe dice que José Olivieri no la compraría, tomas 2."],
+    ["normal","{A}, lee con voz de narrador de documental: “Un nadador perdido, sin fuerzas para salir a respirar.” Si te ríes, toma 2."],
+    ["normal","{A}, haz 10 sentadillas en honor a los entrenamientos de Flo. Si no, toma 3."],
+    ["normal","{A}, nombra 3 cosas de Kenia en 10 segundos. Si no puedes, toma 2 y saluda a los amigos keniatas de Exe."],
+    ["normal","{A} dirige un grito de guerra de rugby. Todos lo siguen. El que se quede callado toma 2."],
+    ["normal","{A}, canta el “Dale Booo” con toda el alma. Si nadie te sigue, tomas tú. Si todos te siguen, reparte 3."],
+    ["normal","{A}, ponle nombre al próximo libro de Exe. El grupo vota: si es malo, tomas 2; si es bueno, reparte 2."],
+    ["normal","{A} elige un compañero de cooler: cada vez que {A} tome hasta el final de la previa, esa persona toma 1 también."],
+    ["normal","{A}, imita a Jacob afuera de la disco en Miami (versión apta para todo público). El grupo decide si mereces tomar 2."],
+    ["normal","{A}, di la hora a la que crees que Exe sale del trabajo. Si es después de las 3 de la tarde, tomas 2 por iluso."],
+    ["normal","{A} y {B} intercambian vasos y toman un trago del vaso del otro."],
+    ["normal","{A}, habla con acento australiano hasta tu próxima carta. Cada vez que se te olvide, toma 1."],
+    ["normal","{A}, haz tu mejor imitación de Exe. Si Exe se ríe, Exe toma 2. Si no, tomas tú."],
+    ["normal","{A}, cuenta un dato de la Selección Argentina que nadie sepa. Si alguien ya lo sabía, tomas 2."],
+    ["normal","{A} reparte tantos tragos como copas del mundo tiene Argentina."],
+    ["normal","{A}, sácate una selfie con la pose del libro de Cröl y mándala al grupo. Si no quieres, toma 3."],
+    ["normal","{A}, describe la torta que quedó aplastada en el cooler. El que la describa mejor después reparte 2."],
+    ["todos","Toman 2 todos los que hayan ido a la Bombonera. Si nadie ha ido, todos toman 1 por pobres."],
+    ["todos","Toman todos los que trabajan después de las 3 de la tarde. Exe no, Exe a esa hora ya está con el mate al sol."],
+    ["todos","Toman 2 todos los que estuvieron en el viaje a Miami."],
+    ["todos","Toman todos los que hayan dicho “wn chucha wn” esta noche. Los que no, díganlo ahora y tomen igual."],
+    ["todos","Toman todos los que tengan pareja. Exe toma doble porque ya no hay vuelta atrás."],
+    ["todos","Toman todos los que no han leído Cröl. Exe reparte 1 extra a quien él quiera."],
+    ["todos","El último en tocarse el mentón como en la foto del libro toma 2."],
+    ["todos","El último en tirarse al suelo toma 2. Jacob tiene ventaja, ya tiene experiencia."],
+    ["todos","El último en levantar los brazos como si cruzara la meta de un triatlón toma 2."],
+    ["todos","Toman todos los que alguna vez hayan perdido plata invirtiendo. José Olivieri queda exento."],
+    ["yonunca","Yo nunca me he metido dentro de un cooler."],
+    ["yonunca","Yo nunca he aplastado una torta."],
+    ["yonunca","Yo nunca he confundido a alguien con mi ex."],
+    ["yonunca","Yo nunca he trabajado menos de 4 horas en un día de semana."],
+    ["yonunca","Yo nunca he tomado sol en horario de oficina."],
+    ["yonunca","Yo nunca he escrito un libro."],
+    ["yonunca","Yo nunca me he sacado una foto con la mano en el mentón."],
+    ["yonunca","Yo nunca he terminado un triatlón."],
+    ["yonunca","Yo nunca he jugado rugby."],
+    ["yonunca","Yo nunca he vivido en otro país."],
+    ["yonunca","Yo nunca he terminado la noche peor que Jacob."],
+    ["yonunca","Yo nunca he llorado por un partido de fútbol."],
+    ["cultura","Tema: <b>jugadores de Boca Juniors</b>. {A} parte, sigue a la derecha. El que repita o se quede pegado toma 2."],
+    ["cultura","Tema: <b>campeones del mundo de Argentina en 2022</b>. {A} parte. El que falle toma 2."],
+    ["cultura","Tema: <b>cosas que puede haber dentro de un cooler</b> (Exe incluido). {A} parte. El que falle toma 2."],
+    ["cultura","Tema: <b>ciudades de Australia</b>. {A} parte. El que falle toma 2."],
+    ["cultura","Tema: <b>palabras de trading</b>. {A} parte. El que falle toma 2."],
+    ["cultura","Tema: <b>ejercicios de gimnasio</b>, en honor a Flo. {A} parte. El que falle toma 2."],
+    ["cultura","Tema: <b>excusas para salir del trabajo antes de las 3</b>. {A} parte. El que falle toma 2."],
+    ["cultura","Tema: <b>palabras argentinas</b>. {A} parte. El que falle toma 2."],
+    ["cultura","Tema: <b>tipos de torta</b>. {A} parte. El que falle toma 2."],
+    ["cultura","Tema: <b>discotecas o cosas de Miami</b>. {A} parte. El que falle toma 2."],
+    ["duelo","{A} vs {B}: plancha abdominal. El primero en caer toma 3."],
+    ["duelo","{A} vs {B}: quien nombre más jugadores de Boca en 15 segundos gana. El otro toma 3."],
+    ["duelo","{A} vs {B}: pulseo. El perdedor toma 2. Si pierde Exe, toma 4: es deportista, no tiene excusa."],
+    ["duelo","{A} vs {B}: mejor pose de autor de libro. Exe es el jurado. El perdedor toma 2."],
+    ["duelo","{A} vs {B}: piedra, papel o tijera al mejor de tres. El perdedor toma 2."],
+    ["duelo","{A} vs {B}: el primero en decir quién fue el arquero de Argentina en la final del 2022 reparte 3."],
+    ["voto","¿Quién es el más probable que termine metido en un cooler esta noche? A la cuenta de 3 todos apuntan. El elegido toma un trago por cada dedo."],
+    ["voto","¿Quién es el más desastroso del grupo, sin contar a Jacob? A la cuenta de 3 apunten. El elegido toma 2."],
+    ["voto","¿Quién llora primero en el matrimonio? A la cuenta de 3 apunten. El elegido toma 2."],
+    ["voto","¿Quién aguantaría menos un triatlón? A la cuenta de 3 apunten. El elegido toma 2."],
+    ["voto","¿Quién sería peor trader? A la cuenta de 3 apunten. El elegido toma 2."],
+    ["exe","Exe, describe a Flo en 3 palabras. Si el grupo cree que alguna también le queda a Mikele, toma 2."],
+    ["exe","Exe, cuéntanos qué te enseñó tu papá del trading. Si hablas más de 30 segundos, todos toman 1 por aburrimiento."],
+    ["exe","Exe, haz tu mejor brazada de crol en el suelo. Si el grupo aprueba, reparte 3. Si no, toma 3."],
+    ["exe","Exe, ¿a qué hora salías del trabajo anterior? Toma un trago por cada hora antes de las 6."],
+    ["exe","Exe, recita la formación de Argentina en la final del 2022. Por cada error, toma 1."],
+    ["exe","Exe, elige a alguien para que se meta 10 segundos en el cooler (o donde haya hielo). Si no quiere, toma 3."],
+    ["exe","Exe, reparte tantos tragos como disciplinas tiene un triatlón."],
+    ["exe","Exe, saluda a tus amigos de Australia y Kenia en un audio. Si no lo mandas, toma 3."],
+    ["exe","Exe, dinos el mejor momento del viaje a Miami. Si tiene que ver con Jacob, todos toman 1."],
+    ["exe","Exe toma 2 porque sí. Es su despedida."],
+    ["brindis","Por Sher, la mejor quiltra. Todos levantan el vaso y toman un trago por ella."],
+    ["brindis","Por Exe y Flo. Todos brindan y toman. Exe toma doble."],
+    ["brindis","Por Boca. Los hinchas toman 2, los demás toman 1 igual."]
+  ];
+
+  // solo modo equipos. "reto" lleva botones para marcar qué equipo ganó.
+  const TEAM_CARDS = [
+    ["reto","Cultura chupística por equipos: <b>jugadores de Boca</b>. Cada equipo dice uno, alternando. El equipo que repita o se quede pegado pierde y toma 2 cada uno."],
+    ["reto","Triatlón: {A} vs {B}. Diez brazadas, diez pedaleos en el aire y diez sentadillas. El equipo del más lento toma 2 cada uno."],
+    ["reto","Cada equipo tiene 30 segundos para hacer en grupo la pose del libro de Exe. Exe elige la mejor. El equipo perdedor toma 2 cada uno."],
+    ["reto","{T} canta un tema de la hinchada de Boca. {O} tiene que superarlo. Exe elige al ganador. El perdedor toma 2 cada uno."],
+    ["reto","Pregunta Exe: ¿cuántas historias tiene Cröl? Cada equipo dice un número. El que quede más lejos toma 2 cada uno."],
+    ["reto","Pregunta Exe: ¿cómo se llama el papá de Exe, el que le enseñó trading? El primer equipo en gritarlo gana; el otro toma 2 cada uno."],
+    ["reto","Pulseo: el más fuerte de {T} contra el más fuerte de {O}. El equipo perdedor toma 2 cada uno."],
+    ["reto","Mímica: {A} actúa una anécdota de Exe (el cooler, Miami, el mate al sol…) y solo su equipo adivina, con 30 segundos. Si aciertan gana su equipo; si no, gana el otro."],
+    ["reto","Penales con una pelota de papel: un pateador de cada equipo, el arquero lo pone el rival. Tres tiros cada uno. El equipo con menos goles toma 2 cada uno."],
+    ["reto","Plancha en equipo: todos al suelo. El equipo que se quede primero sin nadie en plancha pierde y toma 2 cada uno."],
+    ["reto","Cada equipo inventa la contratapa del próximo libro de Exe en un minuto. Exe elige la mejor. El perdedor toma 2 cada uno."],
+    ["reto","Selección Argentina 2022: cada equipo escribe la formación titular de la final. El que tenga más errores toma 2 cada uno."],
+    ["equipo","Todo {T} toma 2."],
+    ["equipo","{T} elige a alguien de {O} para que tome 3."],
+    ["equipo","{O} brinda por {T}. Los dos equipos toman 1."],
+    ["equipo","El equipo que vaya perdiendo toma 2 cada uno. Si van empatados, toman todos."],
+    ["equipo","{A} se cambia de bando por una carta: toma con {O} la próxima vez que pierdan. Después vuelve a casa."]
+  ];
+
+  const VIRUS = [
+    ["{A} habla con acento argentino hasta que termine el virus. Cada error es 1 trago.","{A} puede volver a hablar como chileno."],
+    ["Nadie puede decir “Mikele”. El que la nombre toma 3.","Ya se puede decir Mikele. Con cuidado."],
+    ["Cada vez que alguien diga “Boca”, todos gritan “¡Dale Booo!”. El último toma 1.","Se acabó el Dale Boo obligatorio."],
+    ["Todos deben terminar sus frases con “mate”, como en Australia. El que se le olvide toma 1.","Ya no hay que decir mate. Exe igual va a tomar mate mañana."],
+    ["{A} es Jacob: cada vez que alguien diga “Miami”, {A} se tira al suelo.","{A} se puede levantar. Jacob todavía no."],
+    ["{A} tiene que hacer la pose del libro de Exe cada vez que habla. Si se le olvida, toma 1.","{A} puede bajar la mano del mentón."],
+    ["Exe no puede decir “sí” ni “no”. Cada vez que lo diga, toma 1.","Exe ya puede decir sí. Pronto se lo dice a Flo en el altar."],
+    ["{A} es el entrenador de Flo: cada vez que alguien tome, {A} le pide 5 sentadillas.","Se acabó el entrenamiento. Flo estaría decepcionada."]
+  ];
+  const TEAM_VIRUS = [
+    ["Los de {T} solo pueden hablar con acento argentino. Cada error, 1 trago para su equipo.","{T} puede volver a hablar normal."],
+    ["Cuando tome alguien de {O}, todo {T} grita “¡wn chucha wn!”.","Se acabó el grito. Por ahora."]
+  ];
+
+  // ---------- estado
+  let mode = "ind";
+  let players = [];
+  let teams = [[],[]], teamNames = ["Los del Cooler","Los de Cröl"];
+  try { players = JSON.parse(localStorage.getItem("wcw-players") || "null") || ["Exe"]; } catch(e){ players = ["Exe"]; }
+  try { const m = localStorage.getItem("wcw-mode"); if(m==="eq") mode = "eq"; } catch(e){}
+
+  const $ = id => document.getElementById(id);
+  const chips=$("chips"), hint=$("hint"), playBtn=$("playBtn"), nameIn=$("nameIn");
+  const home=$("home"), teamsScreen=$("teamsScreen"), game=$("game"), wrap=$("cardWrap"), count=$("count");
+
+  const save = () => { try{ localStorage.setItem("wcw-players", JSON.stringify(players)); localStorage.setItem("wcw-mode", mode); }catch(e){} };
+  const minPlayers = () => mode==="eq" ? 4 : 2;
+
+  function renderMode(){
+    $("mInd").setAttribute("aria-pressed", mode==="ind");
+    $("mEq").setAttribute("aria-pressed", mode==="eq");
+    renderPlayers();
+  }
+  $("mInd").onclick = ()=>{ mode="ind"; save(); renderMode(); };
+  $("mEq").onclick = ()=>{ mode="eq"; save(); renderMode(); };
+
+  function renderPlayers(){
+    chips.innerHTML = "";
+    players.forEach((p,i)=>{
+      const li = document.createElement("li"); li.textContent = p;
+      const x = document.createElement("button");
+      x.type="button"; x.textContent="×"; x.setAttribute("aria-label","Quitar a "+p);
+      x.onclick = ()=>{ players.splice(i,1); save(); renderPlayers(); };
+      li.appendChild(x); chips.appendChild(li);
+    });
+    const need = minPlayers();
+    playBtn.disabled = players.length < need;
+    playBtn.textContent = mode==="eq" ? "Armar equipos" : "Empezar";
+    hint.textContent = players.length < need ? "Agreguen al menos " + need + " jugadores." : players.length + " jugadores listos.";
+  }
+  $("addForm").addEventListener("submit", e=>{
+    e.preventDefault();
+    const n = nameIn.value.trim(); if(!n) return;
+    if(players.some(p=>p.toLowerCase()===n.toLowerCase())){ hint.textContent = n + " ya está en la lista."; return; }
+    players.push(n); nameIn.value=""; save(); renderPlayers(); nameIn.focus();
+  });
+
+  // ---------- utilidades
+  const shuffle = a => { for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; };
+  const esc = s => String(s).replace(/[&<>"]/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+  const rnd = a => a[Math.floor(Math.random()*a.length)];
+
+  // ---------- equipos
+  function drawTeams(){
+    const s = shuffle(players.slice());
+    teams = [[],[]];
+    s.forEach((p,i)=>teams[i%2].push(p));
+    renderTeams();
+  }
+  function renderTeams(){
+    $("t0").value = teamNames[0]; $("t1").value = teamNames[1];
+    [0,1].forEach(t=>{ $("l"+t).innerHTML = teams[t].map(p=>"<li>"+esc(p)+"</li>").join(""); });
+  }
+  $("t0").addEventListener("input", e=>{ teamNames[0] = e.target.value.trim() || "Equipo 1"; });
+  $("t1").addEventListener("input", e=>{ teamNames[1] = e.target.value.trim() || "Equipo 2"; });
+  $("reroll").onclick = drawTeams;
+  $("teamsBack").onclick = ()=>{ teamsScreen.hidden = true; home.hidden = false; };
+  $("teamsPlay").onclick = startGame;
+
+  playBtn.addEventListener("click", ()=>{
+    if(mode==="eq"){ home.hidden = true; teamsScreen.hidden = false; drawTeams(); window.scrollTo(0,0); }
+    else startGame();
+  });
+
+  // ---------- mazo
+  let deck=[], idx=0;
+  function assign(c){
+    if(mode==="eq"){
+      const t = Math.random()<.5 ? 0 : 1;
+      c.t = t;
+      if(c.kind==="duelo" || (c.kind==="reto" && c.raw.includes("{B}"))){
+        c.a = rnd(teams[t]); c.b = rnd(teams[1-t]);
+      } else {
+        const s = shuffle(players.slice()); c.a = s[0]; c.b = s[1];
+        if(c.raw.includes("{A}") && (c.raw.includes("{T}")||c.raw.includes("{O}"))) c.a = rnd(teams[t]);
+      }
+    } else {
+      const s = shuffle(players.slice()); c.a = s[0]; c.b = s[1] || s[0];
+    }
+  }
+  function buildDeck(){
+    let base;
+    if(mode==="eq"){
+      base = shuffle(CARDS.map(c=>({kind:c[0], raw:c[1]}))).slice(0,36)
+        .concat(TEAM_CARDS.map(c=>({kind:c[0], raw:c[1]})));
+      base = shuffle(base);
+    } else {
+      base = shuffle(CARDS.map(c=>({kind:c[0], raw:c[1]}))).slice(0,55);
+    }
+    const vpool = mode==="eq" ? shuffle(VIRUS.slice()).slice(0,3).concat(TEAM_VIRUS) : shuffle(VIRUS.slice()).slice(0,5);
+    vpool.forEach(v=>{
+      const pos = 2 + Math.floor(Math.random()*(base.length-16));
+      base.splice(pos,0,{kind:"virus", raw:v[0], endRaw:v[1]});
+    });
+    base.forEach(assign);
+    base.push({kind:"fin"});
+    deck = base; idx = 0;
+  }
+  function fill(c, raw){
+    return raw
+      .replace(/\{A\}/g,"<b>"+esc(c.a)+"</b>").replace(/\{B\}/g,"<b>"+esc(c.b)+"</b>")
+      .replace(/\{T\}/g,"<b>"+esc(teamNames[c.t||0])+"</b>").replace(/\{O\}/g,"<b>"+esc(teamNames[1-(c.t||0)])+"</b>");
+  }
+  function scores(){
+    const s=[0,0]; deck.forEach(c=>{ if(c.winner===0||c.winner===1) s[c.winner]++; }); return s;
+  }
+
+  // ---------- pantalla de juego
+  function crestSmall(){ return document.querySelector(".crest").outerHTML.replace('class="crest"','class="endcrest"'); }
+  function show(){
+    const c = deck[idx];
+    if(c.kind==="virus" && !c.spawned){
+      c.spawned = true;
+      const at = Math.min(idx + 5 + Math.floor(Math.random()*6), deck.length-1);
+      deck.splice(at,0,{kind:"finvirus", raw:c.endRaw, a:c.a, b:c.b, t:c.t});
+    }
+    const [label, fam] = KINDS[c.kind];
+    game.className = "on fam-" + fam;
+    let html = "";
+    if(c.kind==="fin"){
+      html = crestSmall() + '<p class="kind">Se acabó</p>';
+      if(mode==="eq"){
+        const s = scores();
+        html += '<p class="score">' + esc(teamNames[0]) + " " + s[0] + " – " + s[1] + " " + esc(teamNames[1]) + "</p>";
+        const txt = s[0]===s[1] ? "Empate. Toman los dos equipos, 3 cada uno." :
+          "Pierde <b>" + esc(teamNames[s[0]<s[1]?0:1]) + "</b>: 3 tragos cada uno. Después, a la despedida.";
+        html += '<p class="text">' + txt + "</p>";
+      } else {
+        html += '<p class="text">Se acabaron las cartas. Ahora sí: a la despedida. Wn chucha wn.</p>';
+      }
+    } else {
+      html = '<p class="kind">' + label + '</p><p class="text">' + fill(c, c.raw) + "</p>";
+      if(c.kind==="reto"){
+        html += '<div class="win" role="group" aria-label="¿Quién ganó?">' +
+          [0,1].map(t=>'<button type="button" data-w="'+t+'" aria-pressed="'+(c.winner===t)+'">Ganó '+esc(teamNames[t])+'</button>').join("") + "</div>";
+      }
+    }
+    wrap.innerHTML = html;
+    wrap.classList.remove("pop"); void wrap.offsetWidth; wrap.classList.add("pop");
+    if(mode==="eq" && c.kind!=="fin"){ const s=scores(); count.textContent = teamNames[0]+" "+s[0]+" – "+s[1]+" "+teamNames[1]; }
+    else count.textContent = c.kind==="fin" ? "" : (idx+1) + " / " + (deck.length-1);
+    $("tap").textContent = c.kind==="fin" ? "Toca para jugar de nuevo" : (c.kind==="reto" ? "Marquen al ganador o toquen para seguir" : "Toca para seguir");
+  }
+  wrap.addEventListener("click", e=>{
+    const b = e.target.closest("[data-w]"); if(!b) return;
+    e.stopPropagation();
+    deck[idx].winner = Number(b.dataset.w);
+    idx++; show();
+  });
+  function next(){
+    if(deck[idx].kind==="fin"){ buildDeck(); show(); return; }
+    idx++; show();
+  }
+  function startGame(){
+    buildDeck(); home.hidden = true; teamsScreen.hidden = true; show(); $("stage").focus();
+  }
+  $("stage").addEventListener("click", next);
+  $("stage").addEventListener("keydown", e=>{ if(e.target.id==="stage" && (e.key==="Enter"||e.key===" ")){ e.preventDefault(); next(); } });
+  $("backBtn").addEventListener("click", e=>{ e.stopPropagation(); if(idx>0){ idx--; show(); } });
+  $("quitBtn").addEventListener("click", e=>{
+    e.stopPropagation(); game.className = ""; teamsScreen.hidden = true; home.hidden = false;
+  });
+
+  renderMode();
+})();
+</script>
+<script>
+if ("serviceWorker" in navigator && location.protocol === "https:") {
+  window.addEventListener("load", () => { navigator.serviceWorker.register("sw.js").catch(() => {}); });
+}
+</script>
+</body>
+</html>
