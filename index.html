@@ -259,7 +259,7 @@ button:focus-visible,input:focus-visible,[tabindex]:focus-visible{outline:3px so
     ["todos","Toman 2 los que alguna vez tomaron mate o sol en horario de oficina. Exe toma 4: en su pega anterior era casi su trabajo."],
     ["todos","Todos toman 1. Exe toma 3."],
     ["todos","El más alto toma 2. El más bajo reparte 2."],
-    ["todos","Toman 2 los que tengan acciones o cripto. Si alguno compró por un dato de José Olivieri, reparte 4."],
+    ["normal","{A}, recomienda una acción para invertir. Exe dice si José Olivieri la aprobaría o la reprobaría. Si la aprueba, reparte 3. Si la reprueba, toma 3."],
     ["todos","Toman 2 los que no entrenaron hoy. Exe, si entrenaste hoy, reparte 4."],
     ["todos","Toman 2 los que estuvieron en el viaje a Miami. Si Jacob está, toma 4."],
     ["todos","Toman 1 los que tengan barba. Toman 2 los que no pueden tenerla."],
@@ -421,14 +421,15 @@ button:focus-visible,input:focus-visible,[tabindex]:focus-visible{outline:3px so
   let mode = "ind";
   let players = [];
   let teams = [[],[]], teamNames = ["Los del Cooler","Los de Cröl"];
-  try { players = JSON.parse(localStorage.getItem("wcw-players") || "null") || ["Exe"]; } catch(e){ players = ["Exe"]; }
+  const GRUPO = ["Exe","Vicho","Jacob","Quin","Wato","Ware","Mati","Julio","Jose","Mono","Jorge"];
+  try { players = JSON.parse(localStorage.getItem("wcw-players-v2") || "null") || GRUPO.slice(); } catch(e){ players = GRUPO.slice(); }
   try { const m = localStorage.getItem("wcw-mode"); if(m==="eq") mode = "eq"; } catch(e){}
 
   const $ = id => document.getElementById(id);
   const chips=$("chips"), hint=$("hint"), playBtn=$("playBtn"), nameIn=$("nameIn");
   const home=$("home"), teamsScreen=$("teamsScreen"), game=$("game"), wrap=$("cardWrap"), count=$("count");
 
-  const save = () => { try{ localStorage.setItem("wcw-players", JSON.stringify(players)); localStorage.setItem("wcw-mode", mode); }catch(e){} };
+  const save = () => { try{ localStorage.setItem("wcw-players-v2", JSON.stringify(players)); localStorage.setItem("wcw-mode", mode); }catch(e){} };
   const minPlayers = () => mode==="eq" ? 4 : 2;
 
   function renderMode(){

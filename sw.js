@@ -1,5 +1,5 @@
 // Caché simple para jugar sin conexión. Subir VERSION en cada cambio para que los teléfonos tomen la nueva versión.
-const VERSION = "wcw-v5";
+const VERSION = "wcw-v6";
 const FILES = ["./", "index.html", "manifest.webmanifest", "icons/icon-192.png", "icons/icon-512.png", "icons/apple-touch-icon.png"];
 
 self.addEventListener("install", e => {
