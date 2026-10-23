@@ -304,7 +304,7 @@ button:focus-visible,input:focus-visible,[tabindex]:focus-visible{outline:3px so
     // ---- duelos
     ["duelo","Cachipún: {A} vs {B}. El que pierda toma 3."],
     ["duelo","Pulseada: {A} y {B} apoyan el codo en la mesa y se toman de la mano. Gana el que baje el brazo del otro. El que pierda toma 4."],
-    ["duelo","Modo Cröl: {A} y {B} se miran a los ojos con la mirada intensa del libro de Exe. El primero en reírse toma 3."],
+    ["duelo","Póker rápido: {A} vs {B} juegan una mano de Five Card Draw. Cada uno recibe 5 cartas, puede cambiar hasta 3 una sola vez y gana la mejor mano. El que pierda toma 4."],
     ["duelo","Flo dijo: {A} vs {B} en plancha. El primero en caer toma 5."],
     ["duelo","Triatlón: {A} vs {B}. El primero en hacer 10 sentadillas, 10 flexiones y 10 saltos gana. El otro toma 4."],
     ["duelo","{A} vs {B}: alternen nombres de jugadores de Boca. El que se quede pegado toma 4."],
@@ -314,24 +314,23 @@ button:focus-visible,input:focus-visible,[tabindex]:focus-visible{outline:3px so
     // ---- votaciones
     ["voto","¿Quién termina primero en el suelo esta noche? A la cuenta de 3 apunten. El elegido toma 3."],
     ["voto","¿Quién se manda el condoro de la noche? A la cuenta de 3 apunten. El elegido toma 4."],
-    ["voto","¿Quién es el próximo en casarse después de Exe? A la cuenta de 3 apunten. El elegido toma 3."],
+    ["voto","¿Quién daría el peor discurso en el matrimonio de Exe? A la cuenta de 3 apunten. El elegido toma 3."],
     ["voto","¿Quién es el peor para tomar? A la cuenta de 3 apunten. El elegido toma 3."],
     ["voto","¿Quién llega más tarde a todo? A la cuenta de 3 apunten. El elegido toma 2."],
     ["voto","¿Quién tiene más pinta de terminar como Jacob en Miami? A la cuenta de 3 apunten. El elegido toma 3."],
     ["voto","¿Quién sería el peor compañero de triatlón? A la cuenta de 3 apunten. El elegido toma 2."],
 
     // ---- over / under (todos dicen over o under al mismo tiempo)
-    ["overunder","¿Con cuántas mujeres ha estado Exe? La línea es <b>15</b>. Todos dicen over o under al mismo tiempo y Exe revela. Los que fallen toman 3."],
-    ["overunder","¿Cuántas historias tiene Cröl, el libro de Exe? La línea es <b>15</b>. Todos dicen over o under. Los que fallen toman 2.","17 historias: ganó el over"],
-    ["overunder","¿Cuántos ingredientes lleva un Negroni? La línea es <b>4</b>. Todos dicen over o under. Los que fallen toman 2.","3 (gin, vermut rojo y Campari): ganó el under"],
-    ["overunder","¿Cuántos países ha visitado Exe? La línea es <b>15</b>. Todos dicen over o under y Exe revela. Los que fallen toman 2."],
-    ["overunder","¿Cuántos mensajes sin leer tiene {A} en WhatsApp? La línea es <b>30</b>. Todos dicen over o under y {A} muestra el celular. Los que fallen toman 2."],
-    ["overunder","¿Cuántas fotos tiene {A} en su galería? La línea es <b>5.000</b>. Todos dicen over o under y {A} muestra el celular. Los que fallen toman 2."],
-    ["overunder","¿Cuántos pasos lleva {A} hoy? La línea es <b>8.000</b>. Todos dicen over o under y {A} muestra el celular. Los que fallen toman 2."],
-    ["overunder","¿Cuántos años tenía Exe cuando se fue a estudiar a Australia? La línea es <b>21</b>. Todos dicen over o under y Exe revela. Los que fallen toman 2."],
+    ["overunder","¿Con cuántas mujeres ha estado Exe? El que lee pone la línea. Todos dicen over o under al mismo tiempo y Exe revela. Los que fallen toman 3."],
+    ["overunder","¿Cuántas historias tiene Cröl, el libro de Exe? El que lee pone la línea. Todos dicen over o under al mismo tiempo. Los que fallen toman 2.","17 historias"],
+    ["overunder","¿Cuántos ingredientes lleva un Negroni? El que lee pone la línea. Todos dicen over o under al mismo tiempo. Los que fallen toman 2.","3: gin, vermut rojo y Campari"],
+    ["overunder","¿Cuántos países ha visitado Exe? El que lee pone la línea. Todos dicen over o under al mismo tiempo y Exe revela. Los que fallen toman 2."],
+    ["overunder","¿Cuántos mensajes sin leer tiene {A} en WhatsApp? El que lee pone la línea. Todos dicen over o under y {A} muestra el celular. Los que fallen toman 2."],
+    ["overunder","¿Cuántas fotos tiene {A} en su galería? El que lee pone la línea. Todos dicen over o under y {A} muestra el celular. Los que fallen toman 2."],
+    ["overunder","¿Cuántos pasos lleva {A} hoy? El que lee pone la línea. Todos dicen over o under y {A} muestra el celular. Los que fallen toman 2."],
 
     // ---- a buscar
-    ["busqueda","El primero en mostrar algo azul y amarillo regala 5 tragos."],
+    ["busqueda","El primero en mostrar algo azul o amarillo regala 5 tragos."],
     ["busqueda","El primero en mostrar una moneda regala 5 tragos."],
     ["busqueda","El primero en mostrar una tapa de botella regala 5 tragos."],
     ["busqueda","El primero en mostrar una foto con Exe en su celular regala 5 tragos."],
@@ -363,7 +362,7 @@ button:focus-visible,input:focus-visible,[tabindex]:focus-visible{outline:3px so
     ["brindis","Por Boca. Los hinchas toman 3, los demás toman 1 igual."],
     ["brindis","Por el fernet. Todos toman 1; los que tengan fernet toman 3."]
   ];
-  const BOMBA = ["bomba","Se activó la bomba. En algún momento de los próximos minutos va a explotar: el que aparezca en la carta que esté en pantalla se toma el vaso entero. Si aparecen dos, mitad cada uno."];
+  const BOMBA = ["bomba","{A} pone en su celular una alarma secreta, entre 2 y 10 minutos, sin que nadie vea cuánto. Cuando suene, el que aparezca en la carta que esté en pantalla se toma el vaso entero. Si aparecen dos, mitad cada uno."];
 
   // ===== MODO EQUIPOS (distintas a las individuales) =====
   // "reto" lleva botones para marcar qué equipo ganó.
@@ -378,14 +377,14 @@ button:focus-visible,input:focus-visible,[tabindex]:focus-visible{outline:3px so
     ["reto","Beer pong rápido: {A} contra {B}, 3 vasos por lado. El primero en meter la pelota en los 3 vasos del rival gana. El equipo perdedor toma 3 cada uno."],
     ["reto","Wordle del día: un representante de cada equipo lo juega en su celular al mismo tiempo, con ayuda de su equipo. El que lo resuelva primero gana. El otro equipo toma 3 cada uno."],
     ["reto","Plancha en equipo: todos al suelo. El equipo que se quede primero sin nadie en plancha toma 3 cada uno."],
-    ["reto","Flo dijo: sentadillas en equipo. El equipo que sume más sentadillas en 30 segundos gana. El otro toma 2 cada uno."],
+    ["reto","Pirámide del ciego: un representante de cada equipo, con los ojos cerrados, arma una pirámide de vasos plásticos guiado solo por la voz de su equipo. El primero en terminarla gana. El otro equipo toma 3 cada uno."],
     ["reto","Trivia: ¿en qué año ganó Argentina su primer Mundial? El primer equipo en gritar la respuesta correcta gana. El otro toma 2 cada uno.","1978"],
-    ["reto","Over/under por equipos: ¿con cuántas mujeres ha estado Exe? La línea es <b>15</b>. Cada equipo elige over o under y Exe revela. El que falle toma 3 cada uno."],
-    ["reto","Over/under por equipos: ¿cuántos kilómetros suma un triatlón olímpico? La línea es <b>50</b>. El equipo que falle toma 2 cada uno.","51,5 km: ganó el over"],
-    ["reto","Over/under por equipos: ¿cuántas Copas Libertadores tiene Boca? La línea es <b>5,5</b>. El equipo que falle toma 3 cada uno.","6: ganó el over"],
-    ["reto","Over/under por equipos: ¿cuántos goles hizo Messi en el Mundial 2022? La línea es <b>6,5</b>. El equipo que falle toma 2 cada uno.","7: ganó el over"],
+    ["reto","Over/under por equipos: ¿con cuántas mujeres ha estado Exe? El que lee pone la línea, cada equipo elige over o under y Exe revela. El que falle toma 3 cada uno."],
+    ["reto","Over/under por equipos: ¿cuántos kilómetros suma un triatlón olímpico? El que lee pone la línea y cada equipo elige over o under. El que falle toma 2 cada uno.","51,5 km"],
+    ["reto","Over/under por equipos: ¿cuántas Copas Libertadores tiene Boca? El que lee pone la línea y cada equipo elige over o under. El que falle toma 3 cada uno.","6"],
+    ["reto","Over/under por equipos: ¿cuántos goles hizo Messi en el Mundial 2022? El que lee pone la línea y cada equipo elige over o under. El que falle toma 2 cada uno.","7"],
     ["reto","Dos verdades y una mentira: Exe dice tres cosas sobre su vida y cada equipo elige cuál es la mentira. El que falle toma 3 cada uno."],
-    ["reto","¡A buscar! El primer equipo en traer a la mesa algo azul y amarillo gana. El otro toma 2 cada uno."],
+    ["reto","¡A buscar! El primer equipo en traer a la mesa algo azul o amarillo gana. El otro toma 2 cada uno."],
     ["reto","¡A buscar! El primer equipo en juntar 5 tapas de botella gana. El otro toma 2 cada uno."],
     ["reto","Castigo máximo: cachipún entre {A} y {B}. Todo el equipo perdedor se termina el vaso."],
     ["reto","Fondo: {A} contra {B}. El primero en terminar su vaso gana, y su equipo elige a alguien del otro equipo para que se tome un vaso completo."],
@@ -548,7 +547,6 @@ button:focus-visible,input:focus-visible,[tabindex]:focus-visible{outline:3px so
       const at = Math.min(idx + 3 + Math.floor(Math.random()*12), deck.length-1);
       deck.splice(at,0,{kind:"finvirus", raw:c.endRaw, a:c.a, b:c.b, t:c.t});
     }
-    if(c.kind==="bomba" && !c.armed){ c.armed = true; armBomb(); }
     const [label, fam] = KINDS[c.kind];
     game.className = "on fam-" + fam;
     let html = "";

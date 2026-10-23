@@ -5,7 +5,7 @@ Juego para tomar estilo Picolo, hecho para la previa de la despedida de soltero 
 ## Modos
 
 - **Individual:** 52 cartas al azar (retos, “toman los que…”, “yo nunca”, cultura chupística, duelos, votaciones, over/under, ¡a buscar!, castigos máximos y especiales de Exe), más los brindis, 5 virus y una bomba.
-- **2 equipos:** cartas propias, distintas a las del modo individual: retos con marcador (cultura por equipos, flip the cup, beer pong, Wordle, over/under, trivias…), cartas de equipo, brindis, virus de equipos y una bomba. Al final, el equipo perdedor toma.
+- **2 equipos:** cartas propias, distintas a las del modo individual: retos con marcador (cultura por equipos, flip the cup, beer pong, pirámide del ciego, Wordle, over/under, trivias…), cartas de equipo, brindis, virus de equipos y una bomba. Al final, el equipo perdedor toma.
 
 ## Cómo jugar
 
@@ -14,7 +14,7 @@ Juego para tomar estilo Picolo, hecho para la previa de la despedida de soltero 
 3. En las trivias y over/under con respuesta, el primer toque muestra la respuesta y el segundo pasa de carta.
 4. En modo equipos, en los retos se marca qué equipo ganó para sumar al marcador.
 
-Los virus terminan entre 3 y 14 cartas después de aparecer. La bomba explota en algún momento entre 2 y 7 minutos después de su carta: el que aparezca en la carta en pantalla se toma el vaso.
+Los virus terminan entre 3 y 14 cartas después de aparecer. En la bomba, el jugador que sale pone una alarma secreta en su celular; cuando suena, el que aparezca en la carta en pantalla se toma el vaso.
 
 ## Estructura
 
